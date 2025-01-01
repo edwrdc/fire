@@ -1,10 +1,19 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 )
 
 func (app *application) healthcheckHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "OK")
+	data := map[string]string{
+		"status":  "OK",
+		"env":     app.config.env,
+		"version": version,
+	}
+
+	if err := app.jsonResponse(w, http.StatusOK, data); err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
 }
